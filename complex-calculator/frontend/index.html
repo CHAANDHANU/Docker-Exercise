@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Advanced Calculator</title>
+  <style>
+    body { font-family: Arial; text-align: center; padding: 20px; }
+    input { width: 80px; margin: 5px; }
+    button { width: 100px; height: 40px; margin: 5px; }
+  </style>
+</head>
+<body>
+  <h2>Advanced Calculator</h2>
+  <input type="number" id="a" placeholder="A">
+  <input type="number" id="b" placeholder="B">
+  <br>
+  <button onclick="calc('add')">+</button>
+  <button onclick="calc('subtract')">−</button>
+  <button onclick="calc('multiply')">×</button>
+  <button onclick="calc('divide')">÷</button>
+  <button onclick="calc('mod')">Mod</button>
+  <h3>Result: <span id="result">-</span></h3>
+
+  <h4>Logs:</h4>
+  <ul id="logs"></ul>
+
+  <script>
+    async function calc(operation) {
+      const a = parseFloat(document.getElementById('a').value);
+      const b = parseFloat(document.getElementById('b').value);
+      const res = await fetch("http://localhost:3000/calc", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ a, b, operation })
+      });
+      const data = await res.json();
+      document.getElementById("result").innerText = data.result;
+
+      const logRes = await fetch("http://localhost:3000/logs");
+      const logData = await logRes.json();
+      const ul = document.getElementById("logs");
+      ul.innerHTML = "";
+      logData.logs.forEach(item => {
+        const li = document.createElement("li");
+        li.innerText = item;
+        ul.appendChild(li);
+      });
+    }
+  </script>
+</body>
+</html>
